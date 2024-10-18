@@ -1,0 +1,40 @@
+const pipe = (...functions) => input => functions.reduce((acc, fn) => fn(acc), input);
+
+const merge = (left, right) => {
+    let result = [], leftIndex = 0, rightIndex = 0;
+    while (leftIndex < left.length && rightIndex < right.length) {
+        if (left[leftIndex] < right[rightIndex]) {
+            result.push(left[leftIndex]);
+            leftIndex++;
+        } else {
+            result.push(right[rightIndex]);
+            rightIndex++;
+        }
+    }
+    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+};
+
+const splitArray = (arr) => {
+    if (arr.length <= 1) return [arr]; 
+    const mid = Math.floor(arr.length / 2);
+    return [arr.slice(0, mid), arr.slice(mid)];
+};
+
+const mergeSortPipe = arr => {
+    if (arr.length <= 1) return arr;
+    
+    const [left, right] = splitArray(arr);
+    return merge(
+        mergeSortPipe(left), 
+        mergeSortPipe(right)
+    );
+};
+
+const array = [38, 27, 43, 3, 9, 82, 10];
+
+const sortedArray = pipe(
+    splitArray,
+    ([left, right]) => mergeSortPipe(left.concat(right))
+)(array);
+
+console.log("Sorted Array:", sortedArray);
